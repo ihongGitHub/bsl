@@ -35,3 +35,11 @@ network={
 	* sudo apt-get -y install ibus-hangul
 	* sudo apt-get -y install fonts-unfonts-core
 	* rasp-config의 locale을 ko로 setting후 reboot하여
+
+5. qt5설치하기
+	* raspberry: sudo apt-get update
+								sudo apt-get install qt5-defult pyqt5-dev pyqt5-dev-tools
+	* windows: py(3.6.0)는 기본으로 깔림. 아니면
+										pip3 install PyQt5실행
+
+6.
