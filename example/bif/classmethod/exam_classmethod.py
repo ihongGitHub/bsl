@@ -1,3 +1,5 @@
+
+# Example 1: Create class method using classmethod()
 class Person:
     age = 25
 
@@ -7,6 +9,8 @@ class Person:
 # create printAge class method
 Person.printAge1 = classmethod(Person.printAge)
 Person.printAge1()
+
+# Example 2: Create factory method using class method
 
 from datetime import date
 
@@ -30,6 +34,7 @@ person1 = Person.fromBirthYear('John',  1985)
 person1.display()
 
 
+# Example 3: How class method works for inheritance?
 from datetime import date
 
 # random Person
@@ -57,3 +62,4 @@ print(isinstance(man, Man))
 
 man1 = Man.fromFathersAge('John', 1965, 20)
 print(isinstance(man1, Man))
+print(isinstance(man1, Person))
