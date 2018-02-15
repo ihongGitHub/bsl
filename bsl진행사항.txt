@@ -36,4 +36,9 @@
   * Cloud server와 연동 운영
   * rs485입력을 trace하는 thread운영방식 적용
   * Cloud server와의 통신 암호화 결정 및 운영
-  
+
+2018.02.15
+- Local server 구성 Module
+  * Flask: 기본 server
+  * serial: Lora Module Interface
+  * vnc: Host Pc와 Interface()
