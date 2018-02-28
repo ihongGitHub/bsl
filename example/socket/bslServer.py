@@ -27,6 +27,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
 if __name__ == "__main__":
     HOST, PORT = "192.168.40.3", 40007
+    # HOST, PORT = "192.168.40.3", 40007
 
     print('Now Start Serial input thread')
     testSerial.sIn()

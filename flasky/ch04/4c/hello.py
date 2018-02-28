@@ -42,6 +42,6 @@ def index():
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    manager.run()
+    app.run(debug=True)
+    # manager.run()
 # python3 hello.py runserver --host 0.0.0.0

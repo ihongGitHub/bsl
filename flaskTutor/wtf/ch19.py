@@ -12,6 +12,10 @@ def contact():
             flash('All fields are required.')
             return render_template('contact.html', form=form)
         else:
+            name = request.form['name']
+            gen = request.form['Gender']
+            print('name:', name)
+            print('gen:', gen)
             return render_template('success.html')
     elif request.method == 'GET':
         return render_template('contact.html', form=form)
