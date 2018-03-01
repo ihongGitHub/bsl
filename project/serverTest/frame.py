@@ -6,11 +6,14 @@ class Frame:
     srcPid = [1,1]; dstPid = [1,1]; srcGid = [1,2]; dstGid = [1,2]
     tbd0 = [1,2]; tbd1 = [1,2]; tbd2 = [1,2]; zone = [1,1]; CheckSum = [1,1]
     crc = [1,2]
-    frame = [ pid, rxtx, sensor, micom, gid,
+    frameList = [ pid, rxtx, sensor, micom, gid,
         high, low, level, Type, rate, status, dtime,
         cmd, sub, time,
         srcPid, dstPid, srcGid, dstGid, tbd0, tbd1, tbd2, zone, CheckSum, crc ]
+    frame = ''
     # hks
+    clearBuff = False
+
     def getPid(self):
         return self.pid[0]
     def setPid(self, vaule):
@@ -54,16 +57,62 @@ class Frame:
     def getFrame(self):
         return self.frame
 
-    def printFrame(self):
-        str_List = '{'
-        for numList in self.frame:
+    def setFrame(self):
+        frame = '{'
+        for numList in self.frameList:
             if(numList[1]==2):
-                str_List += '%04x' % numList[0]
+                frame += '%04x' % numList[0]
             else:
-                str_List += '%02x' % numList[0]
-        str_List += '}'
-        print(str_List)
+                frame += '%02x' % numList[0]
+        frame += '}'
+        print(frame)
 
+    def getClearBuff(self):
+        return self.clearBuff
+
+    def parseFrame(self, inFrame):
+        first = inFrame.rfind('{')
+        last = inFrame.rfind('}')
+        if last > 70:
+            self.clearBuff = True
+        else:
+            self.clearBuff = False
+
+        if (last - first -1) == 68:
+            result = inFrame[(first+1):last]
+            self.clearBuff = True
+            count = 0
+            temp = list()
+            for s in range(1,35):
+                ss = result[count:count+2]
+                temp.append(int(ss,16))
+                # print('count:{},{}'.format(count,ss))
+                count += 2
+
+            count = 0
+            for i in self.frameList:
+                if i[1] == 2:
+                    i[0] = temp[count]*256
+                    count += 1
+                    i[0] += temp[count]
+                else:
+                    i[0] = temp[count]
+                count += 1
+            self.setFrame()
+            return True
+        else:
+            print('Fail Parse')
+            return False
+
+    def testFrame(self):
+        print('----------- testFrame --------------')
+        strTest = '{01010101123464013201010100010101000101010001000100010001000101010001}1234'
+        print(strTest.find('}'))
+        self.parseFrame(strTest)
+        if self.getClearBuff():
+            print('clear input buff')
+            strTest = ''
+            
 
 if __name__ == '__main__':
     frame = Frame()
@@ -77,6 +126,10 @@ if __name__ == '__main__':
             str_List += '%02x' % numList[0]
     str_List += '}'
     print(str_List)
+
+    frame.testFrame()
+
+
 
 # with open("dict.txt","w") as f:
 #     print(str_List, file = f)
