@@ -14,12 +14,12 @@ class Frame:
     def getPid(self):
         return self.pid[0]
     def setPid(self, vaule):
-        pid[0] = vaule
+        self.pid[0] = vaule
 
     def getRxTx(self):
         return self.rxtx[0]
     def setRxTx(self, vaule):
-        rxtx[0] = vaule
+        self.rxtx[0] = vaule
 
     def getGid(self):
         return self.gid[0]
@@ -29,48 +29,60 @@ class Frame:
     def getHigh(self):
         return self.high[0]
     def setHigh(self, vaule):
-        high[0] = vaule
+        self.high[0] = vaule
 
     def getLow(self):
         return self.low[0]
     def setLow(self, vaule):
-        low[0] = vaule
+        self.low[0] = vaule
 
     def getLevel(self):
         return self.level[0]
     def setLevel(self, vaule):
-        level[0] = vaule
+        self.level[0] = vaule
 
     def getCmd(self):
         return self.cmd[0]
     def setCmd(self, vaule):
-        cmd[0] = vaule
+        self.cmd[0] = vaule
 
     def getSub(self):
         return self.sub[0]
     def setSub(self, vaule):
-        sub[0] = vaule
+        self.sub[0] = vaule
 
     def getFrame(self):
         return self.frame
 
-frame = Frame()
-myFrame = frame.getFrame()
+    def printFrame(self):
+        str_List = '{'
+        for numList in self.frame:
+            if(numList[1]==2):
+                str_List += '%04x' % numList[0]
+            else:
+                str_List += '%02x' % numList[0]
+        str_List += '}'
+        print(str_List)
 
-str_List = '{'
-for numList in myFrame:
-    if(numList[1]==2):
-        str_List += '%04x' % numList[0]
-    else:
-        str_List += '%02x' % numList[0]
-str_List += '}'
-print(str_List)
 
-with open("dict.txt","w") as f:
-    print(str_List, file = f)
+if __name__ == '__main__':
+    frame = Frame()
+    myFrame = frame.getFrame()
 
-import crc16
-print(crc16.crc16xmodem(b'123456789'))
+    str_List = '{'
+    for numList in myFrame:
+        if(numList[1]==2):
+            str_List += '%04x' % numList[0]
+        else:
+            str_List += '%02x' % numList[0]
+    str_List += '}'
+    print(str_List)
+
+# with open("dict.txt","w") as f:
+#     print(str_List, file = f)
+#
+# import crc16
+# print(crc16.crc16xmodem(b'123456789'))
 # import numpy as np
 #
 # def crc16(data: bytes):

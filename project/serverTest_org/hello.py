@@ -50,17 +50,8 @@ def index():
         return redirect(url_for('index'))
     return render_template('index.html', form=form, name=session.get('name'))
 
-@app.route('/test', methods=['GET', 'POST'])
-def test():
-    form = ControlForm()
-    if form.validate_on_submit():
-        print('validate_on_submit')
-        # return render_template('control.html', form=form)
-        # return redirect(url_for('test'))
-    return render_template('control.html', form=form)
-
 # @app.route('/control', methods=['GET', 'POST'])
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/control', methods=['GET', 'POST'])
 def control():
     form = ControlForm()
     if request.method == 'POST':
@@ -78,6 +69,7 @@ def control():
             myFrame.setGid(int(gid)); myFrame.setPid(int(pid)); myFrame.setLevel(int(level));
             myFrame.setCmd(int(cmd))
             myFrame.printFrame()
+
             return render_template('control.html', form=form)
 
     elif request.method == 'GET':

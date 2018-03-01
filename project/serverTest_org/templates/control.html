@@ -10,9 +10,8 @@
 {% endfor %}
 <!--
 <form action="192.168.185.2:5000/control" method=post>
-<form action="http://localhost:5000/control" method=post>
 -->
-<form action = '' method = post>
+<form action="http://localhost:5000/control" method=post>
 <fieldset>
 <legend>Control Form</legend>
 {{ form.hidden_tag() }}
@@ -24,6 +23,7 @@
   {{ form.level.label }}
   {{ form.level }}<br><br>
   {{ form.cmd.label }} {{ form.cmd }}<br>
+
 {{ form.submit }}
 </div>
 </fieldset>
