@@ -3,7 +3,7 @@ import time
 # ser = serial.Serial('/dev/cu.SLAB_USBtoUART',115200,timeout=0)
 # ser = serial.Serial('/dev/ttyUSB0',115200,timeout=0)
 # ser = serial.Serial('/dev/ttyAMA0',115200,timeout=0)
-ser = serial.Serial('COM4',115200,timeout=0)
+ser = serial.Serial('COM62',115200,timeout=0)
 print(ser.portstr)
 
 from threading import Thread, Lock

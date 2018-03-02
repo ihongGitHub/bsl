@@ -1,5 +1,5 @@
 import socketserver
-import testSerial
+# import testSerial
 
 tcpCount = 0
 class MyTCPHandler(socketserver.BaseRequestHandler):
@@ -22,15 +22,15 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         global tcpCount
         testStr = 'Count = {}\n\r'.format(tcpCount)
         arr = bytearray(testStr,'ascii')
-        testSerial.ser.write(arr)
+        # testSerial.ser.write(arr)
         tcpCount += 1
 
 if __name__ == "__main__":
-    HOST, PORT = "192.168.185.2", 40007
+    HOST, PORT = "192.168.185.2", 50007
     # HOST, PORT = "192.168.40.3", 40007
 
     print('Now Start Serial input thread')
-    testSerial.sIn()
+    # testSerial.sIn()
 
     # Create the server, binding to localhost on port 9999
     server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)

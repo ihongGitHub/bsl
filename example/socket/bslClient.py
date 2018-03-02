@@ -1,5 +1,5 @@
 import socket
-host='192.168.40.3'    #my Computer Address
+host='192.168.185.2'    #my Computer Address
 # host='192.168.50.19'  #Windows Address
 port=40007
 s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
