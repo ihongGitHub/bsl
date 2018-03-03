@@ -1,7 +1,7 @@
 class Frame:
-    pid = [1,1]; rxtx = [1,1]; sensor = [1,1]; micom = [1,1]; gid = [1,2];
+    pid = [1,1]; rxtx = [1,1]; sensor = [1,1]; micom = [1,1]; gid = [0x1234,2];
     high = [100,1]; low = [1,1]; level = [50,1]; Type = [1,1]; rate = [1,1]
-    status = [1,1]; dtime = [1,2]
+    status = [1,1]; dtime = [0x1234,2]
     cmd = [1,1]; sub = [1,1]; time = [1,2]
     srcPid = [1,1]; dstPid = [1,1]; srcGid = [1,2]; dstGid = [1,2]
     tbd0 = [1,2]; tbd1 = [1,2]; tbd2 = [1,2]; zone = [1,1]; CheckSum = [1,1]
@@ -10,9 +10,12 @@ class Frame:
         high, low, level, Type, rate, status, dtime,
         cmd, sub, time,
         srcPid, dstPid, srcGid, dstGid, tbd0, tbd1, tbd2, zone, CheckSum, crc ]
+
     frame = ''
-    # hks
-    clearBuff = False
+    byteList = []
+    # input buffer clear
+    clearBuffFlag = False
+    newFrameFlag = False
 
     def getPid(self):
         return self.pid[0]
@@ -57,77 +60,127 @@ class Frame:
     def getFrame(self):
         return self.frame
 
-    def setFrame(self):
-        frame = '{'
+    def setCrcFrame(self):
+        tempList = []
+
         for numList in self.frameList:
             if(numList[1]==2):
-                frame += '%04x' % numList[0]
+                tempList.append(numList[0]%256)
+                tempList.append(int(numList[0]/256))
             else:
-                frame += '%02x' % numList[0]
-        frame += '}'
-        print(frame)
+                tempList.append(numList[0])
+        tempList = tempList[0:(len(tempList)-2)]
+        crcIn = bytearray(tempList)
+        crcResult = self.getCrc(crcIn)
+        self.crc[0] = crcResult
+
+    def setFrame(self):
+        self.setCrcFrame()
+        self.frame = '{'
+        for numList in self.frameList:
+            if(numList[1]==2):
+                self.frame += '%02x' % (numList[0]%256)
+                self.frame += '%02x' % int(numList[0]/256)
+            else:
+                self.frame += '%02x' % numList[0]
+        self.frame += '}'
+        with open('outHex.txt','w') as fp:
+            print(self.frame, file = fp)
+        print(self.frame)
 
     def getClearBuff(self):
         return self.clearBuff
+
+    def getCrc(self, data):
+        from crc import CRC
+        crc16 = CRC()
+        return crc16.update(data)
+
+    def getNewFrameFlag(self):
+        return self.newFrameFlag
+
+    def clearNewFrameFalg(self):
+        self.newFrameFlag
 
     def parseFrame(self, inFrame):
         first = inFrame.rfind('{')
         last = inFrame.rfind('}')
         if last > 70:
-            self.clearBuff = True
+            self.clearBuffFlag = True
         else:
-            self.clearBuff = False
+            self.clearBuffFlag = False
 
         if (last - first -1) == 68:
+            self.clearBuffFlag = True
             result = inFrame[(first+1):last]
-            self.clearBuff = True
+
             count = 0
-            temp = list()
+            temp = list(); self.byteList;
             for s in range(1,35):
                 ss = result[count:count+2]
                 temp.append(int(ss,16))
-                # print('count:{},{}'.format(count,ss))
+                self.byteList.append(int(ss,16))
                 count += 2
+
+            print(self.byteList)
+            temp = temp[0:(len(temp)-2)]
+            print(self.byteList)
+            crcIn = bytearray(temp)
+            crcResult = self.getCrc(crcIn)
+            print(temp)
 
             count = 0
             for i in self.frameList:
                 if i[1] == 2:
-                    i[0] = temp[count]*256
+                    i[0] = self.byteList[count]
                     count += 1
-                    i[0] += temp[count]
+                    i[0] += self.byteList[count]*256
                 else:
-                    i[0] = temp[count]
+                    i[0] = self.byteList[count]
                 count += 1
-            self.setFrame()
+
+            if crcResult == self.crc[0]:
+                print('Crc check Ok')
+                newFrameFlag = True
+                self.setFrame()
+            else:
+                print('Crc error')
             return True
+
         else:
             print('Fail Parse')
             return False
 
     def testFrame(self):
         print('----------- testFrame --------------')
-        strTest = '{01010101123464013201010100010101000101010001000100010001000101010001}1234'
+        strTest = '{000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1fc36a}1234'
+        # strTest = '{01010101123464013201010100010101000101010001000100010001000101010001}1234'
         print(strTest.find('}'))
         self.parseFrame(strTest)
         if self.getClearBuff():
             print('clear input buff')
             strTest = ''
-            
+
 
 if __name__ == '__main__':
     frame = Frame()
     myFrame = frame.getFrame()
 
-    str_List = '{'
-    for numList in myFrame:
-        if(numList[1]==2):
-            str_List += '%04x' % numList[0]
-        else:
-            str_List += '%02x' % numList[0]
-    str_List += '}'
-    print(str_List)
+    frame.setFrame()
+    a = frame.getFrame()
+    aa = bytearray(a, 'ascii')
+    print(aa)
 
-    frame.testFrame()
+    # str_List = '{'
+    # for numList in myFrame:
+    #     if(numList[1]==2):
+    #         str_List += '%04x' % numList[0]
+    #     else:
+    #         str_List += '%02x' % numList[0]
+    # str_List += '}'
+    # print(str_List)
+    #
+    # frame.testFrame()
 
 
 
