@@ -10,6 +10,9 @@ from wtforms.validators import DataRequired
 from flask_script import Manager
 from frame import Frame
 
+import serial
+import time
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
 
@@ -52,11 +55,20 @@ def index():
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
+    ser = serial.Serial('COM3',115200,timeout=0)
     form = ControlForm()
     if form.validate_on_submit():
         print('validate_on_submit')
-        # return render_template('control.html', form=form)
-        # return redirect(url_for('test'))
+        myFrame = Frame()
+        myFrame.setFrame()
+        aa = myFrame.getFrame()
+        # print(aa)
+        arr = bytearray(aa,'ascii')
+        print(arr)
+        ser.write(arr)
+        time.sleep(1)
+        print('bsl frame test')
+    # ser.close()
     return render_template('control.html', form=form)
 
 # @app.route('/control', methods=['GET', 'POST'])
@@ -84,8 +96,7 @@ def control():
         print('request.method == GET ')
         return render_template('control.html', form=form)
 
-
 if __name__ == '__main__':
-    # app.run(debug=True)
-    manager.run()
+    app.run(debug=True)
+    # manager.run()
 # python3 hello.py runserver --host 0.0.0.0
