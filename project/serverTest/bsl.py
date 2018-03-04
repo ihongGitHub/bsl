@@ -10,8 +10,14 @@ from wtforms.validators import DataRequired
 from flask_script import Manager
 from frame import Frame
 
-import serial
+from threading import Thread, Lock
+from hksSer import serThread
+# import serial
+# from hksSer import readThread, writeSer
+# import hksSer
 import time
+
+mySer = serThread()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
@@ -19,7 +25,6 @@ app.config['SECRET_KEY'] = 'hard to guess string'
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 manager = Manager(app)
-
 
 class ControlForm(FlaskForm):
     gid = IntegerField("Group Id:   ",[validators.Required("Please enter your name.")])
@@ -55,25 +60,48 @@ def index():
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
-    ser = serial.Serial('COM3',115200,timeout=0)
+    # with serial.Serial('COM62', 115200, timeout = 0) as ser:
+    # ser = serial.Serial('COM3',115200,timeout=0)
     form = ControlForm()
     if form.validate_on_submit():
         print('validate_on_submit')
         myFrame = Frame()
         myFrame.setFrame()
-        aa = myFrame.getFrame()
-        # print(aa)
-        arr = bytearray(aa,'ascii')
-        print(arr)
-        ser.write(arr)
-        time.sleep(1)
+        # aa = myFrame.getFrame()
+        print(myFrame.getFrame())
         print('bsl frame test')
-    # ser.close()
+    return render_template('control.html', form=form)
+
+
+@app.route('/new', methods=['GET', 'POST'])
+def new():
+    form = ControlForm()
+    mySer.generateSer()
+    return render_template('control.html', form=form)
+
+@app.route('/stop', methods=['GET', 'POST'])
+def stop():
+    form = ControlForm()
+    if mySer.getSerAlive():
+        mySer.send('Quit Serial')
+    else:
+        print('at start Finished Serial')
+    return render_template('control.html', form=form)
+
+@app.route('/start', methods=['GET', 'POST'])
+def startSer():
+    form = ControlForm()
+    if mySer.serFirstFlag:
+        mySer.serFirstFlag = False
+        mySer.start()
+        print('Now start my Serial')
+        time.sleep(1)
     return render_template('control.html', form=form)
 
 # @app.route('/control', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def control():
+    startSer()
     form = ControlForm()
     if request.method == 'POST':
         if form.validate() == False:
@@ -81,6 +109,7 @@ def control():
             print('form.validate() == False:')
             return render_template('control.html', form=form)
         else:
+            # with serial.Serial('COM62', 115200, timeout = 0) as ser:
             myFrame = Frame()
             gid = request.form['gid']
             pid = request.form['pid']
@@ -89,7 +118,11 @@ def control():
             print('gid:{}, pid:{}, level:{}, cmd:{}'.format(gid, pid, level, cmd))
             myFrame.setGid(int(gid)); myFrame.setPid(int(pid)); myFrame.setLevel(int(level));
             myFrame.setCmd(int(cmd))
-            myFrame.printFrame()
+            myFrame.setFrame()
+            # arr = bytearray(myFrame.getFrame(),'ascii')
+            # print(arr)
+            # ser.write(arr)
+            mySer.send(myFrame.getFrame())
             return render_template('control.html', form=form)
 
     elif request.method == 'GET':
@@ -97,6 +130,10 @@ def control():
         return render_template('control.html', form=form)
 
 if __name__ == '__main__':
+    # outSer = writeSer()
+    # inSer = readThread()
+
     app.run(debug=True)
+    print('Now Run')
     # manager.run()
 # python3 hello.py runserver --host 0.0.0.0
