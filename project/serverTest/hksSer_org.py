@@ -8,17 +8,7 @@ from threading import Thread, Lock
 # serialName = 'COM62'
 # ser = serial.Serial(serialName, 115200, timeout=0)
 # print('serial port is {}'.format(ser.portstr))
-class serVar:
-    serFirstFlag = True
-    serAlive = False
-    writeFlag = False
-    readFlag = False
-    readStr = ''
-    writeStr = ''
-
 class serThread(Thread):
-    myVar = serVar()
-
     serFirstFlag = True
     serAlive = False
     writeFlag = False
@@ -33,7 +23,6 @@ class serThread(Thread):
     def send(self, writeStr):
         self.writeStr = writeStr
         self.writeFlag = True
-        self.myVar.writeFlag = True
 
     def getReadFlag(self):
         return self.readFlag
@@ -57,9 +46,7 @@ class serThread(Thread):
         return self.serAlive
 
     def run(self):
-        port = 'COM62'
         with serial.Serial('COM62', 115200, timeout = 0) as ser:
-            print('serial Port:{}'.format(port))
             self.serDevice = ser
             self.serAlive = True
             count = 0
@@ -68,7 +55,6 @@ class serThread(Thread):
                     self.readStr=str(ser.readline(),'utf-8')
                     if self.readStr != '':
                         self.readFlag = True
-                        self.myVar.readFlag = True
                 except:
                     print('Error Data')
 
@@ -81,10 +67,9 @@ class serThread(Thread):
                 if self.writeFlag:
                     ser.write(bytearray(self.writeStr,'ascii'))
                     self.writeFlag = False
-                    self.myVar.writeFlag = False
 
         self.serAlive = False
-        # self.serFirstFlag = True
+        self.serFirstFlag = True
         print('End of inThread')
 
 class testThread(Thread):

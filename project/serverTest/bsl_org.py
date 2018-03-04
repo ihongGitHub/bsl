@@ -11,11 +11,13 @@ from flask_script import Manager
 from frame import Frame
 
 from threading import Thread, Lock
-from hksSer import serThread, serVar
+from hksSer import serThread
+# import serial
+# from hksSer import readThread, writeSer
+# import hksSer
 import time
 
 mySer = serThread()
-mySerVar = serVar
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
@@ -58,39 +60,23 @@ def index():
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
+    # with serial.Serial('COM62', 115200, timeout = 0) as ser:
+    # ser = serial.Serial('COM3',115200,timeout=0)
     form = ControlForm()
     if form.validate_on_submit():
         print('validate_on_submit')
         myFrame = Frame()
         myFrame.setFrame()
+        # aa = myFrame.getFrame()
         print(myFrame.getFrame())
         print('bsl frame test')
     return render_template('control.html', form=form)
 
-class testThread(Thread):
-    def __init__(self):
-        print('Start testThread')
-        Thread.__init__(self)
-    def run(self):
-        while True:
-            if mySer.readFlag:
-                print('var:{}'.format(mySerVar.readFlag))
-                mySer.send(mySer.readStr)
-                print('self.myVar.readFlag')
-                # time.sleep(0.5)
-        print('End of testThread')
 
-testThreadFirstFlag = True
 @app.route('/new', methods=['GET', 'POST'])
 def new():
     form = ControlForm()
-    global testThreadFirstFlag
-    if testThreadFirstFlag:
-        print('Generate testThread')
-        testThreadFirstFlag = False
-        myThread = testThread()
-        myThread.start()
-
+    mySer.generateSer()
     return render_template('control.html', form=form)
 
 @app.route('/stop', methods=['GET', 'POST'])
@@ -112,6 +98,7 @@ def startSer():
         time.sleep(1)
     return render_template('control.html', form=form)
 
+# @app.route('/control', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def control():
     startSer()
@@ -122,6 +109,7 @@ def control():
             print('form.validate() == False:')
             return render_template('control.html', form=form)
         else:
+            # with serial.Serial('COM62', 115200, timeout = 0) as ser:
             myFrame = Frame()
             gid = request.form['gid']
             pid = request.form['pid']
@@ -131,6 +119,9 @@ def control():
             myFrame.setGid(int(gid)); myFrame.setPid(int(pid)); myFrame.setLevel(int(level));
             myFrame.setCmd(int(cmd))
             myFrame.setFrame()
+            # arr = bytearray(myFrame.getFrame(),'ascii')
+            # print(arr)
+            # ser.write(arr)
             mySer.send(myFrame.getFrame())
             return render_template('control.html', form=form)
 
@@ -139,6 +130,9 @@ def control():
         return render_template('control.html', form=form)
 
 if __name__ == '__main__':
+    # outSer = writeSer()
+    # inSer = readThread()
+
     app.run(debug=True)
     print('Now Run')
     # manager.run()
