@@ -73,12 +73,14 @@ class testThread(Thread):
         Thread.__init__(self)
     def run(self):
         while True:
-            if mySer.readFlag:
+            time.sleep(0.01) #for thread, very important
+            if mySer.myVar.readFlag:
+                mySer.myVar.readFlag = False
                 print('var:{}'.format(mySerVar.readFlag))
                 mySer.send(mySer.readStr)
                 print('self.myVar.readFlag')
-                # time.sleep(0.5)
         print('End of testThread')
+
 
 testThreadFirstFlag = True
 @app.route('/new', methods=['GET', 'POST'])
@@ -90,7 +92,6 @@ def new():
         testThreadFirstFlag = False
         myThread = testThread()
         myThread.start()
-
     return render_template('control.html', form=form)
 
 @app.route('/stop', methods=['GET', 'POST'])

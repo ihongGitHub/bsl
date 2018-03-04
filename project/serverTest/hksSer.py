@@ -16,6 +16,8 @@ class serVar:
     readStr = ''
     writeStr = ''
 
+myVar = serVar()
+
 class serThread(Thread):
     myVar = serVar()
 
@@ -33,7 +35,7 @@ class serThread(Thread):
     def send(self, writeStr):
         self.writeStr = writeStr
         self.writeFlag = True
-        self.myVar.writeFlag = True
+        myVar.writeFlag = True
 
     def getReadFlag(self):
         return self.readFlag
@@ -58,6 +60,7 @@ class serThread(Thread):
 
     def run(self):
         port = 'COM62'
+        count = 0
         with serial.Serial('COM62', 115200, timeout = 0) as ser:
             print('serial Port:{}'.format(port))
             self.serDevice = ser
@@ -73,7 +76,8 @@ class serThread(Thread):
                     print('Error Data')
 
                 if self.readFlag:
-                    print(self.readStr)
+                    count += 1
+                    print('count:{}->{}'.format(count,self.readStr))
                     self.readFlag = False
                     if self.readStr.find('Quit Serial') != -1:
                         break
