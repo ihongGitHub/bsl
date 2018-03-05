@@ -28,8 +28,8 @@ class ControlForm(FlaskForm):
     gid = IntegerField("Group Id:   ",[validators.Required("Please enter your name.")])
     pid = IntegerField("Private Id: ",[validators.Required("Please enter your name.")])
     level = IntegerField("Level:     ",[validators.Required("Please enter your name.")])
-    cmd = RadioField('Command', choices=[('12','Control'),
-    ('13','NewSet'), ('14','Alternative')])
+    sub = RadioField('Command', choices=[('103','Control'),
+    ('104','NewSet'), ('109','Alternative')])
     submit = SubmitField("Send")
 
 class NameForm(FlaskForm):
@@ -73,7 +73,7 @@ class testThread(Thread):
         Thread.__init__(self)
     def run(self):
         while True:
-            time.sleep(0.01) #for thread, very important
+            time.sleep(1) #for thread, very important
             if mySer.myVar.readFlag:
                 mySer.myVar.readFlag = False
                 print('var:{}'.format(mySerVar.readFlag))
@@ -127,10 +127,10 @@ def control():
             gid = request.form['gid']
             pid = request.form['pid']
             level = request.form['level']
-            cmd = request.form['cmd']
-            print('gid:{}, pid:{}, level:{}, cmd:{}'.format(gid, pid, level, cmd))
+            sub = request.form['sub']
+            print('gid:{}, pid:{}, level:{}, sub:{}'.format(gid, pid, level, sub))
             myFrame.setGid(int(gid)); myFrame.setPid(int(pid)); myFrame.setLevel(int(level));
-            myFrame.setCmd(int(cmd))
+            myFrame.setSub(int(sub))
             myFrame.setFrame()
             mySer.send(myFrame.getFrame())
             return render_template('control.html', form=form)

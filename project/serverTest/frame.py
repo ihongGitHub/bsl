@@ -2,14 +2,14 @@ class Frame:
     pid = [1,1]; rxtx = [1,1]; sensor = [1,1]; micom = [1,1]; gid = [0x1234,2];
     high = [100,1]; low = [1,1]; level = [50,1]; Type = [1,1]; rate = [1,1]
     status = [1,1]; dtime = [0x1234,2]
-    cmd = [1,1]; sub = [1,1]; time = [1,2]
-    srcPid = [1,1]; dstPid = [1,1]; srcGid = [1,2]; dstGid = [1,2]
+    cmd = [100,1]; sub = [1,1]; time = [1,2]
+    dstPid = [1,1]; dstRxTx = [1,1]; dstGid = [1,2]; srcGid = [1,2]
     tbd0 = [1,2]; tbd1 = [1,2]; tbd2 = [1,2]; zone = [1,1]; CheckSum = [1,1]
     crc = [1,2]
     frameList = [ pid, rxtx, sensor, micom, gid,
         high, low, level, Type, rate, status, dtime,
         cmd, sub, time,
-        srcPid, dstPid, srcGid, dstGid, tbd0, tbd1, tbd2, zone, CheckSum, crc ]
+        pid, rxtx, gid, srcGid, tbd0, tbd1, tbd2, zone, CheckSum, crc ]
 
     frame = ''
     byteList = []

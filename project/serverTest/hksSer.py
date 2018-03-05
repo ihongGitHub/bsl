@@ -59,14 +59,15 @@ class serThread(Thread):
         return self.serAlive
 
     def run(self):
-        port = 'COM62'
+        port = 'COM3'
         count = 0
-        with serial.Serial('COM62', 115200, timeout = 0) as ser:
+        with serial.Serial(port, 115200, timeout = 0) as ser:
             print('serial Port:{}'.format(port))
             self.serDevice = ser
             self.serAlive = True
             count = 0
             while True:
+                time.sleep(0.001)
                 try:
                     self.readStr=str(ser.readline(),'utf-8')
                     if self.readStr != '':
@@ -77,7 +78,7 @@ class serThread(Thread):
 
                 if self.readFlag:
                     count += 1
-                    print('count:{}->{}'.format(count,self.readStr))
+                    print(self.readStr, sep = '')
                     self.readFlag = False
                     if self.readStr.find('Quit Serial') != -1:
                         break
