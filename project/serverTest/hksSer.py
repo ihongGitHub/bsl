@@ -59,7 +59,8 @@ class serThread(Thread):
         return self.serAlive
 
     def run(self):
-        port = 'COM3'
+        # port = 'COM3'
+        port = 'COM62'
         count = 0
         with serial.Serial(port, 115200, timeout = 0) as ser:
             print('serial Port:{}'.format(port))
@@ -84,9 +85,11 @@ class serThread(Thread):
                         break
 
                 if self.writeFlag:
-                    ser.write(bytearray(self.writeStr,'ascii'))
-                    self.writeFlag = False
-                    self.myVar.writeFlag = False
+                    with open('outHex.txt','w') as f:
+                        ser.write(bytearray(self.writeStr,'ascii'))
+                        print(self.writeStr, file = f)
+                        self.writeFlag = False
+                        self.myVar.writeFlag = False
 
         self.serAlive = False
         # self.serFirstFlag = True

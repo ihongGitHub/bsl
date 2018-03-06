@@ -1,12 +1,14 @@
+# eMst: 64, eGw: 32,
 class Frame:
-    pid = [1,1]; rxtx = [1,1]; sensor = [1,1]; micom = [1,1]; gid = [0x1234,2];
+    pidOrg = [1,1]; rxtxOrg = [64,1]; gidOrg = [2,2];
+    pid = [1,1]; rxtx = [64,1]; sensor = [1,1]; micom = [1,1]; gid = [2,2];
     high = [100,1]; low = [1,1]; level = [50,1]; Type = [1,1]; rate = [1,1]
     status = [1,1]; dtime = [0x1234,2]
     cmd = [100,1]; sub = [1,1]; time = [1,2]
     dstPid = [1,1]; dstRxTx = [1,1]; dstGid = [1,2]; srcGid = [1,2]
     tbd0 = [1,2]; tbd1 = [1,2]; tbd2 = [1,2]; zone = [1,1]; CheckSum = [1,1]
     crc = [1,2]
-    frameList = [ pid, rxtx, sensor, micom, gid,
+    frameList = [ pidOrg, rxtxOrg, sensor, micom, gidOrg,
         high, low, level, Type, rate, status, dtime,
         cmd, sub, time,
         pid, rxtx, gid, srcGid, tbd0, tbd1, tbd2, zone, CheckSum, crc ]
