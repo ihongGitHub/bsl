@@ -29,7 +29,7 @@ class ControlForm(FlaskForm):
     pid = IntegerField("Private Id: ",[validators.Required("Please enter your name.")])
     level = IntegerField("Level:     ",[validators.Required("Please enter your name.")])
     sub = RadioField('Command', choices=[('103','Control'),
-    ('104','NewSet'), ('109','Alternative')])
+    ('104','NewSet'), ('109','Alternative'), ('110','Status'), ('101','Power')])
     submit = SubmitField("Send")
 
 class NameForm(FlaskForm):
