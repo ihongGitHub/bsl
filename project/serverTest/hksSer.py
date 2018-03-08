@@ -92,20 +92,6 @@ class serThread(Thread):
 
                 if self.writeFlag:
                     ser.write(bytearray(self.writeStr,'ascii'))
-                    f = open('outHex.txt', 'r')
-                    a = ''
-                    while True:
-                        line = f.readline()
-                        if not line:
-                            break
-                        a += line
-                    print(a)
-                    f.close()
-
-                    self.writeStr = a + self.writeStr
-
-                    self.writeStr = self.writeStr + '\n'
-                    self.FileSave('outHex.txt',self.writeStr)
                     self.writeFlag = False
                     self.myVar.writeFlag = False
 

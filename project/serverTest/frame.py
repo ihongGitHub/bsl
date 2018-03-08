@@ -86,7 +86,7 @@ class Frame:
             else:
                 self.frame += '%02x' % numList[0]
         self.frame += '}'
-        with open('outHex.txt','w') as fp:
+        with open('outHex.txt','a') as fp:
             print(self.frame, file = fp)
         print(self.frame)
 
